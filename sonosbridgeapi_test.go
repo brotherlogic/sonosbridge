@@ -81,6 +81,11 @@ func TestBadLoad(t *testing.T) {
 	if status.Code(err) != codes.Internal {
 		t.Errorf("SHould have failed on get")
 	}
+
+	_, err = s.GetAuthUrl(context.Background(), &pb.GetAuthUrlRequest{})
+	if status.Code(err) != codes.Internal {
+		t.Errorf("SHould have failed on getauthurl: %v", err)
+	}
 }
 
 func TestFirstLoad(t *testing.T) {
