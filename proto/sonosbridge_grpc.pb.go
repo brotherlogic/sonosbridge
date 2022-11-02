@@ -19,6 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 type SonosBridgeServiceClient interface {
 	SetConfig(ctx context.Context, in *SetConfigRequest, opts ...grpc.CallOption) (*SetConfigResponse, error)
 	GetConfig(ctx context.Context, in *GetConfigRequest, opts ...grpc.CallOption) (*GetConfigResponse, error)
+	GetAuthUrl(ctx context.Context, in *GetAuthUrlRequest, opts ...grpc.CallOption) (*GetAuthUrlResponse, error)
 }
 
 type sonosBridgeServiceClient struct {
@@ -47,12 +48,22 @@ func (c *sonosBridgeServiceClient) GetConfig(ctx context.Context, in *GetConfigR
 	return out, nil
 }
 
+func (c *sonosBridgeServiceClient) GetAuthUrl(ctx context.Context, in *GetAuthUrlRequest, opts ...grpc.CallOption) (*GetAuthUrlResponse, error) {
+	out := new(GetAuthUrlResponse)
+	err := c.cc.Invoke(ctx, "/sonosbridge.SonosBridgeService/GetAuthUrl", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SonosBridgeServiceServer is the server API for SonosBridgeService service.
 // All implementations should embed UnimplementedSonosBridgeServiceServer
 // for forward compatibility
 type SonosBridgeServiceServer interface {
 	SetConfig(context.Context, *SetConfigRequest) (*SetConfigResponse, error)
 	GetConfig(context.Context, *GetConfigRequest) (*GetConfigResponse, error)
+	GetAuthUrl(context.Context, *GetAuthUrlRequest) (*GetAuthUrlResponse, error)
 }
 
 // UnimplementedSonosBridgeServiceServer should be embedded to have forward compatible implementations.
@@ -64,6 +75,9 @@ func (UnimplementedSonosBridgeServiceServer) SetConfig(context.Context, *SetConf
 }
 func (UnimplementedSonosBridgeServiceServer) GetConfig(context.Context, *GetConfigRequest) (*GetConfigResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetConfig not implemented")
+}
+func (UnimplementedSonosBridgeServiceServer) GetAuthUrl(context.Context, *GetAuthUrlRequest) (*GetAuthUrlResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAuthUrl not implemented")
 }
 
 // UnsafeSonosBridgeServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -113,6 +127,24 @@ func _SonosBridgeService_GetConfig_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SonosBridgeService_GetAuthUrl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAuthUrlRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SonosBridgeServiceServer).GetAuthUrl(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/sonosbridge.SonosBridgeService/GetAuthUrl",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SonosBridgeServiceServer).GetAuthUrl(ctx, req.(*GetAuthUrlRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _SonosBridgeService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "sonosbridge.SonosBridgeService",
 	HandlerType: (*SonosBridgeServiceServer)(nil),
@@ -124,6 +156,10 @@ var _SonosBridgeService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetConfig",
 			Handler:    _SonosBridgeService_GetConfig_Handler,
+		},
+		{
+			MethodName: "GetAuthUrl",
+			Handler:    _SonosBridgeService_GetAuthUrl_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
