@@ -18,8 +18,15 @@ func (s *Server) SetConfig(ctx context.Context, req *pb.SetConfigRequest) (*pb.S
 		}
 	}
 
-	config.Client = req.GetClient()
-	config.Secret = req.GetSecret()
+	if len(req.GetClient()) > 0 {
+		config.Client = req.GetClient()
+	}
+	if len(req.GetSecret()) > 0 {
+		config.Secret = req.GetSecret()
+	}
+	if len(req.GetCode()) > 0 {
+		config.Code = req.GetCode()
+	}
 
 	return &pb.SetConfigResponse{}, s.saveConfig(ctx, config)
 }

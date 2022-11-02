@@ -11,11 +11,13 @@ message VolumeChangeRequest {
 message Config {
     string client = 1;
     string secret = 2;
+    string code = 3;
 }
 
 message SetConfigRequest {
     string client = 1;
     string secret = 2;
+    string code = 3;
 }
 
 message SetConfigResponse {}
