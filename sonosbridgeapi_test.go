@@ -1,7 +1,13 @@
 package main
 
 import (
+	"bufio"
 	"context"
+	"fmt"
+	"log"
+	"net/http"
+	"os"
+	"strings"
 	"testing"
 
 	dsc "github.com/brotherlogic/dstore/client"
@@ -18,6 +24,7 @@ func GetTestServer() *Server {
 	s.SkipLog = true
 
 	s.client = &dsc.DStoreClient{Test: true}
+	s.hclient = &testClient{}
 
 	return s
 }
@@ -86,6 +93,11 @@ func TestBadLoad(t *testing.T) {
 	if status.Code(err) != codes.Internal {
 		t.Errorf("SHould have failed on getauthurl: %v", err)
 	}
+
+	_, err = s.GetToken(context.Background(), &pb.GetTokenRequest{})
+	if status.Code(err) != codes.Internal {
+		t.Errorf("SHould have failed on getauthurl: %v", err)
+	}
 }
 
 func TestFirstLoad(t *testing.T) {
@@ -98,4 +110,101 @@ func TestFirstLoad(t *testing.T) {
 	if err != nil {
 		t.Errorf("Should not have failed with: %v", err)
 	}
+}
+
+func TestGetToken(t *testing.T) {
+	s := GetTestServer()
+
+	s.SetConfig(context.Background(), &pb.SetConfigRequest{Client: "client", Secret: "secret", Code: "code"})
+
+	token, err := s.GetToken(context.Background(), &pb.GetTokenRequest{})
+	if err != nil {
+		t.Fatalf("Unable to get token: %v", err)
+	}
+
+	if token.GetToken().GetExpireTime() == 0 && len(token.GetToken().Token) > 0 {
+		t.Errorf("Bad token: %v", token.GetToken())
+	}
+
+	token2, err := s.GetToken(context.Background(), &pb.GetTokenRequest{})
+	if err != nil {
+		t.Fatalf("Unable to get token: %v", err)
+	}
+
+	if token2.Token.GetExpireTime() != token.GetToken().ExpireTime {
+		t.Errorf("Mismatch in expires: %v and %v", token, token2)
+	}
+
+}
+
+func TestGetTokenBadPost(t *testing.T) {
+	s := GetTestServer()
+	s.hclient = &testClient{responseCode: 400}
+
+	s.SetConfig(context.Background(), &pb.SetConfigRequest{Client: "client", Secret: "secret", Code: "code"})
+
+	token, err := s.GetToken(context.Background(), &pb.GetTokenRequest{})
+	if err == nil {
+		t.Fatalf("Should have failed to get token: %v", token)
+	}
+}
+
+func TestGetTokenFailPost(t *testing.T) {
+	s := GetTestServer()
+	s.hclient = &testClient{failure: fmt.Errorf("Built bad")}
+
+	s.SetConfig(context.Background(), &pb.SetConfigRequest{Client: "client", Secret: "secret", Code: "code"})
+
+	token, err := s.GetToken(context.Background(), &pb.GetTokenRequest{})
+	if err == nil {
+		t.Fatalf("Should have failed to get token: %v", token)
+	}
+
+}
+
+type testClient struct {
+	responseCode int
+	failure      error
+}
+
+func (t *testClient) Do(req *http.Request) (*http.Response, error) {
+	if t.failure != nil {
+		return nil, t.failure
+	}
+	response := &http.Response{}
+	strippedURL := strings.ReplaceAll(strings.ReplaceAll(req.URL.String(), "/", "_"), "https:__api.sonos.com_", "")
+	blah, err := os.Open("testdata/" + strippedURL)
+
+	log.Printf("Opened %v", "testdata"+strippedURL)
+	if err != nil {
+		return nil, err
+	}
+
+	response.Body = blah
+
+	// Add the header if it exists -
+	headers, err := os.Open("testdata" + strippedURL + ".headers")
+
+	if err == nil {
+		he := make(http.Header)
+		response.Header = he
+
+		defer headers.Close()
+		scanner := bufio.NewScanner(headers)
+		for scanner.Scan() {
+			line := scanner.Text()
+			if strings.Contains(line, ":") {
+				elems := strings.Split(line, ":")
+				response.Header.Add(strings.TrimSpace(elems[0]), strings.TrimSpace(elems[1]))
+			}
+		}
+	}
+
+	if t.responseCode > 0 {
+		response.StatusCode = t.responseCode
+	} else {
+		response.StatusCode = 200
+	}
+
+	return response, nil
 }

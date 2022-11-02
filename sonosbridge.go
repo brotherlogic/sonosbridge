@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/brotherlogic/goserver"
 	"golang.org/x/net/context"
@@ -18,6 +19,10 @@ import (
 	pb "github.com/brotherlogic/sonosbridge/proto"
 )
 
+type SonoHttpClient interface {
+	Do(req *http.Request) (*http.Response, error)
+}
+
 const (
 	CONFIG_KEY = "github.com/brotherlogic/sonosbridge/config"
 )
@@ -25,7 +30,8 @@ const (
 // Server main server type
 type Server struct {
 	*goserver.GoServer
-	client *dsc.DStoreClient
+	client  *dsc.DStoreClient
+	hclient SonoHttpClient
 }
 
 // Init builds the server
@@ -34,6 +40,7 @@ func Init() *Server {
 		GoServer: &goserver.GoServer{},
 	}
 	s.client = &dsc.DStoreClient{Gs: s.GoServer}
+	s.hclient = http.DefaultClient
 	return s
 }
 

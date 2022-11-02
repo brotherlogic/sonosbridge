@@ -1,12 +1,77 @@
 package main
 
 import (
+	"bytes"
+	"encoding/base64"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	"time"
+
 	"golang.org/x/net/context"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	pb "github.com/brotherlogic/sonosbridge/proto"
 )
+
+type tokenResponse struct {
+	AccessToken  string
+	TokenType    string
+	ExpireIn     int
+	RefreshToken string
+	scope        string
+}
+
+func parseToken(tokenbody string) *pb.Token {
+	result := &tokenResponse{}
+	json.Unmarshal([]byte(tokenbody), result)
+	return &pb.Token{
+		Token:      result.AccessToken,
+		Refresh:    result.RefreshToken,
+		TokenType:  result.TokenType,
+		ExpireTime: time.Now().Add(time.Second * time.Duration(result.ExpireIn)).Unix(),
+	}
+}
+
+func buildPost(config *pb.Config) *http.Request {
+	data := "grant_type=authorization_code&code=" + config.GetCode() + "&redirect_uri=https%3A%2F%2Fwww.google.com%2F"
+	req, _ := http.NewRequest(http.MethodPost, "https://api.sonos.com/login/v3/oauth/access", bytes.NewBuffer([]byte(data)))
+
+	req.Header.Set("Authorization", fmt.Sprintf("Basic {%v}", base64.RawURLEncoding.EncodeToString([]byte(fmt.Sprintf("%v:%v", config.GetClient(), config.GetSecret())))))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
+	return req
+}
+
+func (s *Server) GetToken(ctx context.Context, req *pb.GetTokenRequest) (*pb.GetTokenResponse, error) {
+	config, err := s.loadConfig(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if config.GetToken() != nil {
+		return &pb.GetTokenResponse{Token: config.GetToken()}, nil
+	}
+
+	post := buildPost(config)
+	res, err := s.hclient.Do(post)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("Bad response on token retrieve:(%v) %v", res.StatusCode, res)
+	}
+
+	defer res.Body.Close()
+	body, _ := ioutil.ReadAll(res.Body)
+
+	token := parseToken(string(body))
+	config.Token = token
+
+	return &pb.GetTokenResponse{Token: token}, s.saveConfig(ctx, config)
+}
 
 func (s *Server) GetAuthUrl(ctx context.Context, req *pb.GetAuthUrlRequest) (*pb.GetAuthUrlResponse, error) {
 	config, err := s.loadConfig(ctx)
