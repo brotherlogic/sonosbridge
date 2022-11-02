@@ -65,10 +65,7 @@ func (s *Server) GetToken(ctx context.Context, req *pb.GetTokenRequest) (*pb.Get
 	}
 
 	defer res.Body.Close()
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		return nil, err
-	}
+	body, _ := ioutil.ReadAll(res.Body)
 
 	token := parseToken(string(body))
 	config.Token = token

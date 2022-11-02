@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -137,14 +138,30 @@ func TestGetTokenBadPost(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Should have failed to get token: %v", token)
 	}
+}
+
+func TestGetTokenFailPost(t *testing.T) {
+	s := GetTestServer()
+	s.hclient = &testClient{failure: fmt.Errorf("Built bad")}
+
+	s.SetConfig(context.Background(), &pb.SetConfigRequest{Client: "client", Secret: "secret", Code: "code"})
+
+	token, err := s.GetToken(context.Background(), &pb.GetTokenRequest{})
+	if err == nil {
+		t.Fatalf("Should have failed to get token: %v", token)
+	}
 
 }
 
 type testClient struct {
 	responseCode int
+	failure      error
 }
 
 func (t *testClient) Do(req *http.Request) (*http.Response, error) {
+	if t.failure != nil {
+		return nil, t.failure
+	}
 	response := &http.Response{}
 	strippedURL := strings.ReplaceAll(strings.ReplaceAll(req.URL.String(), "/", "_"), "https:__api.sonos.com_", "")
 	blah, err := os.Open("testdata/" + strippedURL)
