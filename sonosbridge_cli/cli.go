@@ -27,9 +27,10 @@ func main() {
 		addFlags := flag.NewFlagSet("AddConfig", flag.ExitOnError)
 		var key = addFlags.String("key", "", "Id of the record to add")
 		var secret = addFlags.String("secret", "", "Cost of the record")
+		var code = addFlags.String("code", "", "Code")
 
 		if err := addFlags.Parse(os.Args[2:]); err == nil {
-			_, err := client.SetConfig(ctx, &pb.SetConfigRequest{Client: *key, Secret: *secret})
+			_, err := client.SetConfig(ctx, &pb.SetConfigRequest{Client: *key, Secret: *secret, Code: *code})
 			if err != nil {
 				log.Fatalf("Bad set: %v", err)
 			}
