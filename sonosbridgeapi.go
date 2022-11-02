@@ -35,17 +35,13 @@ func parseToken(tokenbody string) *pb.Token {
 	}
 }
 
-func buildPost(config *pb.Config) (*http.Request, error) {
+func buildPost(config *pb.Config) *http.Request {
 	data := "grant_type=authorization_code&code=" + config.GetCode() + "&redirect_uri=https%3A%2F%2Fwww.google.com%2F"
-	req, err := http.NewRequest(http.MethodPost, "https://api.sonos.com/login/v3/oauth/access", bytes.NewBuffer([]byte(data)))
-
-	if err != nil {
-		return nil, err
-	}
+	req, _ := http.NewRequest(http.MethodPost, "https://api.sonos.com/login/v3/oauth/access", bytes.NewBuffer([]byte(data)))
 
 	req.Header.Set("Authorization", fmt.Sprintf("Basic {%v}", base64.RawURLEncoding.EncodeToString([]byte(fmt.Sprintf("%v:%v", config.GetClient(), config.GetSecret())))))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
-	return req, nil
+	return req
 }
 
 func (s *Server) GetToken(ctx context.Context, req *pb.GetTokenRequest) (*pb.GetTokenResponse, error) {
@@ -58,11 +54,7 @@ func (s *Server) GetToken(ctx context.Context, req *pb.GetTokenRequest) (*pb.Get
 		return &pb.GetTokenResponse{Token: config.GetToken()}, nil
 	}
 
-	post, err := buildPost(config)
-	if err != nil {
-		return nil, err
-	}
-
+	post := buildPost(config)
 	res, err := s.hclient.Do(post)
 	if err != nil {
 		return nil, err

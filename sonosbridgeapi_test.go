@@ -92,6 +92,11 @@ func TestBadLoad(t *testing.T) {
 	if status.Code(err) != codes.Internal {
 		t.Errorf("SHould have failed on getauthurl: %v", err)
 	}
+
+	_, err = s.GetToken(context.Background(), &pb.GetTokenRequest{})
+	if status.Code(err) != codes.Internal {
+		t.Errorf("SHould have failed on getauthurl: %v", err)
+	}
 }
 
 func TestFirstLoad(t *testing.T) {
@@ -119,9 +124,25 @@ func TestGetToken(t *testing.T) {
 	if token.GetToken().GetExpireTime() == 0 && len(token.GetToken().Token) > 0 {
 		t.Errorf("Bad token: %v", token.GetToken())
 	}
+
 }
 
-type testClient struct{}
+func TestGetTokenBadPost(t *testing.T) {
+	s := GetTestServer()
+	s.hclient = &testClient{responseCode: 400}
+
+	s.SetConfig(context.Background(), &pb.SetConfigRequest{Client: "client", Secret: "secret", Code: "code"})
+
+	token, err := s.GetToken(context.Background(), &pb.GetTokenRequest{})
+	if err == nil {
+		t.Fatalf("Should have failed to get token: %v", token)
+	}
+
+}
+
+type testClient struct {
+	responseCode int
+}
 
 func (t *testClient) Do(req *http.Request) (*http.Response, error) {
 	response := &http.Response{}
@@ -153,7 +174,11 @@ func (t *testClient) Do(req *http.Request) (*http.Response, error) {
 		}
 	}
 
-	response.StatusCode = 200
+	if t.responseCode > 0 {
+		response.StatusCode = t.responseCode
+	} else {
+		response.StatusCode = 200
+	}
 
 	return response, nil
 }
