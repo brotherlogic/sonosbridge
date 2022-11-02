@@ -35,7 +35,7 @@ func main() {
 			}
 		}
 	case "url":
-		url, err := client.SetConfig(ctx, &pb.SetConfigRequest{})
+		url, err := client.GetAuthUrl(ctx, &pb.GetAuthUrlRequest{})
 		if err != nil {
 			log.Fatalf("Bad set: %v", err)
 		}
