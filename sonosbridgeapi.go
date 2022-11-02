@@ -2,6 +2,8 @@ package main
 
 import (
 	"golang.org/x/net/context"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	pb "github.com/brotherlogic/sonosbridge/proto"
 )
@@ -9,7 +11,11 @@ import (
 func (s *Server) SetConfig(ctx context.Context, req *pb.SetConfigRequest) (*pb.SetConfigResponse, error) {
 	config, err := s.loadConfig(ctx)
 	if err != nil {
-		return nil, err
+		if status.Code(err) == codes.InvalidArgument {
+			config = &pb.Config{}
+		} else {
+			return nil, err
+		}
 	}
 
 	config.Client = req.GetClient()
