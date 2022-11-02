@@ -28,7 +28,13 @@ message GetConfigResponse {
     Config config = 1;
 }
 
+message GetAuthUrlRequest {}
+message GetAuthUrlResponse {
+    string url = 1;
+}
+
 service SonosBridgeService {
   rpc SetConfig(SetConfigRequest) returns (SetConfigResponse) {};
   rpc GetConfig(GetConfigRequest) returns (GetConfigResponse) {};
+  rpc GetAuthUrl(GetAuthUrlRequest) returns (GetAuthUrlResponse) {};
 }
