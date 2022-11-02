@@ -54,6 +54,8 @@ func (s *Server) GetToken(ctx context.Context, req *pb.GetTokenRequest) (*pb.Get
 		return &pb.GetTokenResponse{Token: config.GetToken()}, nil
 	}
 
+	s.CtxLog(ctx, fmt.Sprintf("Building with confi: %v", config))
+
 	post := buildPost(config)
 	s.CtxLog(ctx, fmt.Sprintf("POST: %v", post))
 	res, err := s.hclient.Do(post)
