@@ -24,18 +24,15 @@ type tokenResponse struct {
 	scope        string
 }
 
-func parseToken(tokenbody string) (*pb.Token, error) {
+func parseToken(tokenbody string) *pb.Token {
 	result := &tokenResponse{}
-	err := json.Unmarshal([]byte(tokenbody), result)
-	if err != nil {
-		return nil, err
-	}
+	json.Unmarshal([]byte(tokenbody), result)
 	return &pb.Token{
 		Token:      result.AccessToken,
 		Refresh:    result.RefreshToken,
 		TokenType:  result.TokenType,
 		ExpireTime: time.Now().Add(time.Second * time.Duration(result.ExpireIn)).Unix(),
-	}, nil
+	}
 }
 
 func buildPost(config *pb.Config) (*http.Request, error) {
@@ -81,11 +78,7 @@ func (s *Server) GetToken(ctx context.Context, req *pb.GetTokenRequest) (*pb.Get
 		return nil, err
 	}
 
-	token, err := parseToken(string(body))
-	if err != nil {
-		return nil, fmt.Errorf("Parse problem: %v -> %v", body, err)
-	}
-
+	token := parseToken(string(body))
 	config.Token = token
 
 	return &pb.GetTokenResponse{Token: token}, s.saveConfig(ctx, config)
