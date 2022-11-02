@@ -4,6 +4,8 @@ import (
 	"context"
 	"testing"
 
+	dsc "github.com/brotherlogic/dstore/client"
+
 	pb "github.com/brotherlogic/sonosbridge/proto"
 )
 
@@ -12,6 +14,8 @@ func GetTestServer() *Server {
 	s.SkipElect = true
 	s.SkipIssue = true
 	s.SkipLog = true
+
+	s.client = &dsc.DStoreClient{Test: true}
 
 	return s
 }
