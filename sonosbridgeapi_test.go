@@ -37,6 +37,22 @@ func TestConfig(t *testing.T) {
 	}
 }
 
+func TestJustSetCodeConfig(t *testing.T) {
+	s := GetTestServer()
+
+	s.SetConfig(context.Background(), &pb.SetConfigRequest{Code: "code"})
+	s.SetConfig(context.Background(), &pb.SetConfigRequest{Client: "client"})
+
+	res, err := s.GetConfig(context.Background(), &pb.GetConfigRequest{})
+	if err != nil {
+		t.Fatalf("Unable to get config: %v", err)
+	}
+
+	if res.GetConfig().GetClient() != "client" || res.GetConfig().GetCode() != "code" {
+		t.Errorf("Bad config: %v", res.GetConfig())
+	}
+}
+
 func TestBadLoad(t *testing.T) {
 	s := GetTestServer()
 	s.client.ErrorCode = make(map[string]codes.Code)
@@ -51,5 +67,17 @@ func TestBadLoad(t *testing.T) {
 	_, err = s.GetConfig(context.Background(), &pb.GetConfigRequest{})
 	if status.Code(err) != codes.Internal {
 		t.Errorf("SHould have failed on get")
+	}
+}
+
+func TestFirstLoad(t *testing.T) {
+	s := GetTestServer()
+	s.client.ErrorCode = make(map[string]codes.Code)
+	s.client.ErrorCode[CONFIG_KEY] = codes.InvalidArgument
+
+	_, err := s.SetConfig(context.Background(), &pb.SetConfigRequest{Client: "client", Secret: "secret"})
+
+	if err != nil {
+		t.Errorf("Should not have failed with: %v", err)
 	}
 }
