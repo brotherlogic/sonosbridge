@@ -22,6 +22,19 @@ func GetTestServer() *Server {
 	return s
 }
 
+func TestGetAuthUrl(t *testing.T) {
+	s := GetTestServer()
+
+	resp, err := s.GetAuthUrl(context.Background(), &pb.GetAuthUrlRequest{})
+	if err != nil {
+		t.Fatalf("Bad read: %v", err)
+	}
+
+	if len(resp.GetUrl()) == 0 {
+		t.Errorf("No URL in response: %v", resp)
+	}
+}
+
 func TestConfig(t *testing.T) {
 	s := GetTestServer()
 
