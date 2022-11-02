@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package sonosbridge;
+
+option go_package = "github.com/brotherlogic/sonosbridge/proto";
+
+message VolumeChangeRequest {
+    bool increase = 1;
+}
