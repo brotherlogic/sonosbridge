@@ -7,3 +7,26 @@ option go_package = "github.com/brotherlogic/sonosbridge/proto";
 message VolumeChangeRequest {
     bool increase = 1;
 }
+
+message Config {
+    string client = 1;
+    string secret = 2;
+}
+
+message SetConfigRequest {
+    string client = 1;
+    string secret = 2;
+}
+
+message SetConfigResponse {}
+
+message GetConfigRequest {}
+
+message GetConfigResponse {
+    Config config = 1;
+}
+
+service SonosBridgeService {
+  rpc SetConfig(SetConfigRequest) returns (SetConfigResponse) {};
+  rpc GetConfig(GetConfigRequest) returns (GetConfigResponse) {};
+}
