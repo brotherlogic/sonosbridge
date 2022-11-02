@@ -35,7 +35,7 @@ func main() {
 			}
 		}
 	case "url":
-		url, err := client.SetConfig(ctx, &pb.SetConfigRequest{Client: *key, Secret: *secret})
+		url, err := client.SetConfig(ctx, &pb.SetConfigRequest{})
 		if err != nil {
 			log.Fatalf("Bad set: %v", err)
 		}
