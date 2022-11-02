@@ -105,6 +105,7 @@ func (s *Server) SetConfig(ctx context.Context, req *pb.SetConfigRequest) (*pb.S
 	}
 	if len(req.GetCode()) > 0 {
 		config.Code = req.GetCode()
+		s.saveConfig(ctx, config)
 		_, err := s.GetToken(ctx, &pb.GetTokenRequest{})
 		return &pb.SetConfigResponse{}, err
 	}
