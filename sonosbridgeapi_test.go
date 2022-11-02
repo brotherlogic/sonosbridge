@@ -126,6 +126,15 @@ func TestGetToken(t *testing.T) {
 		t.Errorf("Bad token: %v", token.GetToken())
 	}
 
+	token2, err := s.GetToken(context.Background(), &pb.GetTokenRequest{})
+	if err != nil {
+		t.Fatalf("Unable to get token: %v", err)
+	}
+
+	if token2.Token.GetExpireTime() != token.GetToken().ExpireTime {
+		t.Errorf("Mismatch in expires: %v and %v", token, token2)
+	}
+
 }
 
 func TestGetTokenBadPost(t *testing.T) {
