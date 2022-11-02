@@ -55,6 +55,7 @@ func (s *Server) GetToken(ctx context.Context, req *pb.GetTokenRequest) (*pb.Get
 	}
 
 	post := buildPost(config)
+	s.CtxLog(ctx, fmt.Sprintf("POST: %v", post))
 	res, err := s.hclient.Do(post)
 	if err != nil {
 		return nil, err

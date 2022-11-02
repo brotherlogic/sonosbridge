@@ -35,6 +35,12 @@ func main() {
 				log.Fatalf("Bad set: %v", err)
 			}
 		}
+	case "token":
+		token, err := client.GetToken(ctx, &pb.GetTokenRequest{})
+		if err != nil {
+			log.Fatalf("Bad set: %v", err)
+		}
+		fmt.Printf("%v\n", token.GetToken())
 	case "url":
 		url, err := client.GetAuthUrl(ctx, &pb.GetAuthUrlRequest{})
 		if err != nil {
