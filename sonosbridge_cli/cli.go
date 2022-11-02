@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -33,5 +34,11 @@ func main() {
 				log.Fatalf("Bad set: %v", err)
 			}
 		}
+	case "url":
+		url, err := client.SetConfig(ctx, &pb.SetConfigRequest{Client: *key, Secret: *secret})
+		if err != nil {
+			log.Fatalf("Bad set: %v", err)
+		}
+		fmt.Printf("%v\n", url)
 	}
 }
