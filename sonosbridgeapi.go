@@ -64,6 +64,9 @@ func (s *Server) GetToken(ctx context.Context, req *pb.GetTokenRequest) (*pb.Get
 	}
 
 	if res.StatusCode != 200 {
+		defer res.Body.Close()
+		body, _ := ioutil.ReadAll(res.Body)
+		s.CtxLog(ctx, fmt.Sprintf("BODY: %v", string(body)))
 		return nil, fmt.Errorf("Bad response on token retrieve:(%v) %v", res.StatusCode, res)
 	}
 
