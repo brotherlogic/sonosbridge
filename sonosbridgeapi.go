@@ -9,7 +9,16 @@ import (
 )
 
 func (s *Server) GetAuthUrl(ctx context.Context, req *pb.GetAuthUrlRequest) (*pb.GetAuthUrlResponse, error) {
-	return &pb.GetAuthUrlResponse{Url: ""}, nil
+	config, err := s.loadConfig(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	url := "https://api.sonos.com/login/v3/oauth?client_id=" +
+		config.GetClient() +
+		"&response_type=code&state=mystate&scope=playback-control-all&redirect_uri=https%3A%2F%2Flocalhost.com%2F"
+
+	return &pb.GetAuthUrlResponse{Url: url}, nil
 }
 
 func (s *Server) SetConfig(ctx context.Context, req *pb.SetConfigRequest) (*pb.SetConfigResponse, error) {
