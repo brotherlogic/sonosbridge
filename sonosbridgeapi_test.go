@@ -1,7 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"context"
+	"log"
+	"net/http"
+	"os"
+	"strings"
 	"testing"
 
 	dsc "github.com/brotherlogic/dstore/client"
@@ -18,6 +23,7 @@ func GetTestServer() *Server {
 	s.SkipLog = true
 
 	s.client = &dsc.DStoreClient{Test: true}
+	s.hclient = &testClient{}
 
 	return s
 }
@@ -110,7 +116,44 @@ func TestGetToken(t *testing.T) {
 		t.Fatalf("Unable to get token: %v", err)
 	}
 
-	if token.GetToken().GetExpireTime() == 0 {
+	if token.GetToken().GetExpireTime() == 0 && len(token.GetToken().Token) > 0 {
 		t.Errorf("Bad token: %v", token.GetToken())
 	}
+}
+
+type testClient struct{}
+
+func (t *testClient) Do(req *http.Request) (*http.Response, error) {
+	response := &http.Response{}
+	strippedURL := strings.ReplaceAll(strings.ReplaceAll(req.URL.String(), "/", "_"), "https:__api.sonos.com_", "")
+	blah, err := os.Open("testdata/" + strippedURL)
+
+	log.Printf("Opened %v", "testdata"+strippedURL)
+	if err != nil {
+		return nil, err
+	}
+
+	response.Body = blah
+
+	// Add the header if it exists -
+	headers, err := os.Open("testdata" + strippedURL + ".headers")
+
+	if err == nil {
+		he := make(http.Header)
+		response.Header = he
+
+		defer headers.Close()
+		scanner := bufio.NewScanner(headers)
+		for scanner.Scan() {
+			line := scanner.Text()
+			if strings.Contains(line, ":") {
+				elems := strings.Split(line, ":")
+				response.Header.Add(strings.TrimSpace(elems[0]), strings.TrimSpace(elems[1]))
+			}
+		}
+	}
+
+	response.StatusCode = 200
+
+	return response, nil
 }
