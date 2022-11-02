@@ -11,5 +11,5 @@ func (s *Server) SetConfig(ctx context.Context, req *pb.SetConfigRequest) (*pb.S
 }
 
 func (s *Server) GetConfig(ctx context.Context, req *pb.GetConfigRequest) (*pb.GetConfigResponse, error) {
-	return &pb.GetConfigResponse{, nil}
+	return &pb.GetConfigResponse{}, nil
 }
