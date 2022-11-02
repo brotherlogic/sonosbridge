@@ -8,6 +8,10 @@ import (
 	pb "github.com/brotherlogic/sonosbridge/proto"
 )
 
+func (s *Server) GetToken(ctx context.Context, req *pb.GetTokenRequest) (*pb.GetTokenResponse, error) {
+	return &pb.GetTokenResponse{}, nil
+}
+
 func (s *Server) GetAuthUrl(ctx context.Context, req *pb.GetAuthUrlRequest) (*pb.GetAuthUrlResponse, error) {
 	config, err := s.loadConfig(ctx)
 	if err != nil {

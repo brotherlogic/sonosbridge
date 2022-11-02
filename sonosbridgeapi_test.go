@@ -99,3 +99,18 @@ func TestFirstLoad(t *testing.T) {
 		t.Errorf("Should not have failed with: %v", err)
 	}
 }
+
+func TestGetToken(t *testing.T) {
+	s := GetTestServer()
+
+	s.SetConfig(context.Background(), &pb.SetConfigRequest{Client: "client", Secret: "secret", Code: "code"})
+
+	token, err := s.GetToken(context.Background(), &pb.GetTokenRequest{})
+	if err != nil {
+		t.Fatalf("Unable to get token: %v", err)
+	}
+
+	if token.GetToken().GetExpireTime() == 0 {
+		t.Errorf("Bad token: %v", token.GetToken())
+	}
+}

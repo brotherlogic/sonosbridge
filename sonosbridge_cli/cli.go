@@ -40,6 +40,6 @@ func main() {
 		if err != nil {
 			log.Fatalf("Bad set: %v", err)
 		}
-		fmt.Printf("%v\n", url)
+		fmt.Printf("%v\n", url.GetUrl())
 	}
 }
