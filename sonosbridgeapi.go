@@ -211,3 +211,29 @@ func (s *Server) GetConfig(ctx context.Context, req *pb.GetConfigRequest) (*pb.G
 	}
 	return &pb.GetConfigResponse{Config: config}, nil
 }
+
+type volumeResponse struct {
+	Volume int `json:"volume"`
+}
+
+func (s *Server) GetVolume(ctx context.Context, req *pb.GetVolumeRequest) (*pb.GetVolumeResponse, error) {
+	config, err := s.loadConfig(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, player := range config.GetHousehold().GetPlayers() {
+		if player.GetName() == req.GetPlayer() {
+			res, err := s.runGet(ctx, "api.ws.sonos.com/control/api/v1", fmt.Sprintf("/players/%v/playerVolume", player.GetId()), config.Token.GetToken())
+			if err != nil {
+				return nil, err
+			}
+
+			resp := &volumeResponse{}
+			json.Unmarshal(res, resp)
+			return &pb.GetVolumeResponse{Volume: int32(resp.Volume)}, nil
+		}
+	}
+
+	return &pb.GetVolumeResponse{}, nil
+}
