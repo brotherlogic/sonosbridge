@@ -115,6 +115,11 @@ func TestBadLoad(t *testing.T) {
 	if status.Code(err) != codes.Internal {
 		t.Errorf("SHould have failed on getauthurl: %v", err)
 	}
+
+	_, err = s.GetHousehold(context.Background(), &pb.GetHouseholdRequest{})
+	if status.Code(err) != codes.Internal {
+		t.Errorf("SHould have failed on gethousehold: %v", err)
+	}
 }
 
 func TestFirstLoad(t *testing.T) {
