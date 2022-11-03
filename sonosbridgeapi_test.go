@@ -170,10 +170,13 @@ func TestGetNoVoume(t *testing.T) {
 
 func TestGetBadVolume(t *testing.T) {
 	s := GetTestServer()
-	s.hclient = &testClient{directory: "testdata_badvolume"}
-	s.GetHousehold(context.Background(), &pb.GetHouseholdRequest{})
+	s.hclient = &testClient{directory: "testdata_badvolume/"}
+	_, err := s.GetHousehold(context.Background(), &pb.GetHouseholdRequest{})
+	if err != nil {
+		t.Fatalf("Bad household: %v", err)
+	}
 
-	vol, err := s.GetVolume(context.Background(), &pb.GetVolumeRequest{Player: "None"})
+	vol, err := s.GetVolume(context.Background(), &pb.GetVolumeRequest{Player: "Playroom"})
 	if err == nil {
 		t.Fatalf("Should have failed: %v", vol)
 	}
