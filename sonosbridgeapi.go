@@ -125,7 +125,7 @@ func (s *Server) GetHousehold(ctx context.Context, req *pb.GetHouseholdRequest) 
 	}
 
 	config.Household = household
-	return &pb.GetHouseholdResponse{Household: config.Household}, nil
+	return &pb.GetHouseholdResponse{Household: config.Household}, s.saveConfig(ctx, config)
 }
 
 func (s *Server) GetToken(ctx context.Context, req *pb.GetTokenRequest) (*pb.GetTokenResponse, error) {

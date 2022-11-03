@@ -57,6 +57,22 @@ func TestGetHousehold(t *testing.T) {
 	if len(resp.GetHousehold().GetPlayers()) == 0 {
 		t.Errorf("No players returned: %v", resp)
 	}
+
+	// This should shortcut
+
+	resp, err = s.GetHousehold(context.Background(), &pb.GetHouseholdRequest{})
+	if err != nil {
+		t.Fatalf("Bad read: %v", err)
+	}
+
+	if resp.GetHousehold().GetId() == "" {
+		t.Errorf("Got households: %v", resp)
+	}
+
+	if len(resp.GetHousehold().GetPlayers()) == 0 {
+		t.Errorf("No players returned: %v", resp)
+	}
+
 }
 
 func TestConfig(t *testing.T) {
