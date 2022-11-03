@@ -50,7 +50,7 @@ func (s *Server) GetToken(ctx context.Context, req *pb.GetTokenRequest) (*pb.Get
 		return nil, err
 	}
 
-	if config.GetToken() != nil {
+	if config.GetToken() != nil && time.Since(time.Unix(config.GetToken().GetExpireTime(), 0)) < time.Hour*24 && len(config.GetToken().GetToken()) > 0 {
 		return &pb.GetTokenResponse{Token: config.GetToken()}, nil
 	}
 
