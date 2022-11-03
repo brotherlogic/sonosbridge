@@ -42,6 +42,19 @@ func TestGetAuthUrl(t *testing.T) {
 	}
 }
 
+func TestGetHousehold(t *testing.T) {
+	s := GetTestServer()
+
+	resp, err := s.GetHousehold(context.Background(), &pb.GetHouseholdRequest{})
+	if err != nil {
+		t.Fatalf("Bad read: %v", err)
+	}
+
+	if resp.GetHousehold().GetId() == "" {
+		t.Errorf("Got households: %v", resp)
+	}
+}
+
 func TestConfig(t *testing.T) {
 	s := GetTestServer()
 

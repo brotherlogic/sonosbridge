@@ -21,6 +21,7 @@ type SonosBridgeServiceClient interface {
 	GetConfig(ctx context.Context, in *GetConfigRequest, opts ...grpc.CallOption) (*GetConfigResponse, error)
 	GetAuthUrl(ctx context.Context, in *GetAuthUrlRequest, opts ...grpc.CallOption) (*GetAuthUrlResponse, error)
 	GetToken(ctx context.Context, in *GetTokenRequest, opts ...grpc.CallOption) (*GetTokenResponse, error)
+	GetHousehold(ctx context.Context, in *GetHouseholdRequest, opts ...grpc.CallOption) (*GetHouseholdResponse, error)
 }
 
 type sonosBridgeServiceClient struct {
@@ -67,6 +68,15 @@ func (c *sonosBridgeServiceClient) GetToken(ctx context.Context, in *GetTokenReq
 	return out, nil
 }
 
+func (c *sonosBridgeServiceClient) GetHousehold(ctx context.Context, in *GetHouseholdRequest, opts ...grpc.CallOption) (*GetHouseholdResponse, error) {
+	out := new(GetHouseholdResponse)
+	err := c.cc.Invoke(ctx, "/sonosbridge.SonosBridgeService/GetHousehold", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SonosBridgeServiceServer is the server API for SonosBridgeService service.
 // All implementations should embed UnimplementedSonosBridgeServiceServer
 // for forward compatibility
@@ -75,6 +85,7 @@ type SonosBridgeServiceServer interface {
 	GetConfig(context.Context, *GetConfigRequest) (*GetConfigResponse, error)
 	GetAuthUrl(context.Context, *GetAuthUrlRequest) (*GetAuthUrlResponse, error)
 	GetToken(context.Context, *GetTokenRequest) (*GetTokenResponse, error)
+	GetHousehold(context.Context, *GetHouseholdRequest) (*GetHouseholdResponse, error)
 }
 
 // UnimplementedSonosBridgeServiceServer should be embedded to have forward compatible implementations.
@@ -92,6 +103,9 @@ func (UnimplementedSonosBridgeServiceServer) GetAuthUrl(context.Context, *GetAut
 }
 func (UnimplementedSonosBridgeServiceServer) GetToken(context.Context, *GetTokenRequest) (*GetTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetToken not implemented")
+}
+func (UnimplementedSonosBridgeServiceServer) GetHousehold(context.Context, *GetHouseholdRequest) (*GetHouseholdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetHousehold not implemented")
 }
 
 // UnsafeSonosBridgeServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -177,6 +191,24 @@ func _SonosBridgeService_GetToken_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SonosBridgeService_GetHousehold_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetHouseholdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SonosBridgeServiceServer).GetHousehold(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/sonosbridge.SonosBridgeService/GetHousehold",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SonosBridgeServiceServer).GetHousehold(ctx, req.(*GetHouseholdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _SonosBridgeService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "sonosbridge.SonosBridgeService",
 	HandlerType: (*SonosBridgeServiceServer)(nil),
@@ -196,6 +228,10 @@ var _SonosBridgeService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetToken",
 			Handler:    _SonosBridgeService_GetToken_Handler,
+		},
+		{
+			MethodName: "GetHousehold",
+			Handler:    _SonosBridgeService_GetHousehold_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

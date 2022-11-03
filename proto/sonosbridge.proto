@@ -8,12 +8,24 @@ message VolumeChangeRequest {
     bool increase = 1;
 }
 
+message Household {
+    string id = 1;
+    repeated Player players = 2;
+}
+
+message Player {
+    string id = 1;
+    string name = 2;
+}
+
 message Config {
     string client = 1;
     string secret = 2;
     string code = 3;
 
     Token token = 4;
+
+    Household household = 5;
 }
 
 message Token {
@@ -47,9 +59,15 @@ message GetTokenResponse {
     Token token = 1;
 }
 
+message GetHouseholdRequest {}
+message GetHouseholdResponse {
+    Household household = 1;
+}
+
 service SonosBridgeService {
   rpc SetConfig(SetConfigRequest) returns (SetConfigResponse) {};
   rpc GetConfig(GetConfigRequest) returns (GetConfigResponse) {};
   rpc GetAuthUrl(GetAuthUrlRequest) returns (GetAuthUrlResponse) {};
   rpc GetToken(GetTokenRequest) returns (GetTokenResponse) {};
+  rpc GetHousehold(GetHouseholdRequest) returns (GetHouseholdResponse) {};
 }

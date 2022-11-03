@@ -44,6 +44,51 @@ func buildPost(config *pb.Config) *http.Request {
 	return req
 }
 
+type householdResponse struct {
+	households []householdJson `json:"households"`
+}
+
+type householdJson struct {
+	id string `json:"id"`
+}
+
+func (s *Server) buildHousehold(ctx context.Context, config *pb.Config) (*pb.Household, error) {
+	jsonbytes, err := s.runGet(ctx, "api.ws.sonos.com", "control/api/v1/households", config.GetToken().GetToken())
+	if err != nil {
+		return nil, err
+	}
+
+	result := &householdResponse{}
+	json.Unmarshal(jsonbytes, result)
+
+	if len(result.households) == 0 {
+		return nil, fmt.Errorf("No households returned")
+	}
+
+	return &pb.Household{
+		Id: result.households[0].id,
+	}, nil
+}
+
+func (s *Server) GetHousehold(ctx context.Context, req *pb.GetHouseholdRequest) (*pb.GetHouseholdResponse, error) {
+	config, err := s.loadConfig(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if config.GetHousehold() != nil {
+		return &pb.GetHouseholdResponse{Household: config.GetHousehold()}, nil
+	}
+
+	household, err := s.buildHousehold(ctx, config)
+	if err != nil {
+		return nil, err
+	}
+
+	config.Household = household
+	return &pb.GetHouseholdResponse{Household: config.Household}, nil
+}
+
 func (s *Server) GetToken(ctx context.Context, req *pb.GetTokenRequest) (*pb.GetTokenResponse, error) {
 	config, err := s.loadConfig(ctx)
 	if err != nil {
