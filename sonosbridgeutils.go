@@ -20,7 +20,7 @@ func (s *Server) runGet(ctx context.Context, host, path, token string) ([]byte, 
 		defer res.Body.Close()
 		body, _ := ioutil.ReadAll(res.Body)
 		s.CtxLog(ctx, fmt.Sprintf("BODY: %v", string(body)))
-		return nil, fmt.Errorf("Bad response on token retrieve:(%v) %v", res.StatusCode, res)
+		return nil, fmt.Errorf("Bad response on %v retrieve:(%v) %v", res.StatusCode, path, res)
 	}
 
 	defer res.Body.Close()

@@ -47,5 +47,11 @@ func main() {
 			log.Fatalf("Bad set: %v", err)
 		}
 		fmt.Printf("%v\n", url.GetUrl())
+	case "household":
+		url, err := client.GetHousehold(ctx, &pb.GetHouseholdRequest{})
+		if err != nil {
+			log.Fatalf("Bad set: %v", err)
+		}
+		fmt.Printf("%v\n", url.GetHousehold())
 	}
 }
