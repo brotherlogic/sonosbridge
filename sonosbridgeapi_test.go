@@ -195,7 +195,7 @@ func TestBadHousehold(t *testing.T) {
 
 func TestBadPlayers(t *testing.T) {
 	s := GetTestServer()
-	s.hclient = &testClient{directory: "testdata_badplayer/"}
+	s.hclient = &testClient{directory: "testdata_badplayers/"}
 
 	token, err := s.GetHousehold(context.Background(), &pb.GetHouseholdRequest{})
 	if err == nil {
