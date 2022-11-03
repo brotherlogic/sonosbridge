@@ -122,7 +122,7 @@ func TestGetToken(t *testing.T) {
 		t.Fatalf("Unable to get token: %v", err)
 	}
 
-	if token.GetToken().GetExpireTime() == 0 && len(token.GetToken().Token) > 0 {
+	if token.GetToken().GetExpireTime() == 0 || len(token.GetToken().Token) == 0 {
 		t.Errorf("Bad token: %v", token.GetToken())
 	}
 
