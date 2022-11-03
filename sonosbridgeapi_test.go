@@ -181,12 +181,22 @@ func TestGetTokenFailPost(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Should have failed to get token: %v", token)
 	}
+}
 
+func TestBadHousehold(t *testing.T) {
+	s := GetTestServer()
+	s.hclient = &testClient{directory: "testdata_badhousehold"}
+
+	token, err := s.GetHousehold(context.Background(), &pb.GetHouseholdRequest{})
+	if err == nil {
+		t.Errorf("Should have failed: %v", token)
+	}
 }
 
 type testClient struct {
 	responseCode int
 	failure      error
+	directory    string
 }
 
 func (t *testClient) Do(req *http.Request) (*http.Response, error) {
@@ -199,9 +209,13 @@ func (t *testClient) Do(req *http.Request) (*http.Response, error) {
 	if !strings.Contains(req.URL.String(), "api.ws.sonos") {
 		strippedURL = strings.ReplaceAll(strings.ReplaceAll(req.URL.String(), "/", "_"), "https:__api.sonos.com_", "")
 	}
-	blah, err := os.Open("testdata/" + strippedURL)
+	dir := "testdata/"
+	if t.directory != "" {
+		dir = t.directory
+	}
+	blah, err := os.Open(dir + strippedURL)
 
-	log.Printf("Opened %v", "testdata"+strippedURL)
+	log.Printf("Opened %v", dir+strippedURL)
 	if err != nil {
 		return nil, err
 	}
@@ -209,7 +223,7 @@ func (t *testClient) Do(req *http.Request) (*http.Response, error) {
 	response.Body = blah
 
 	// Add the header if it exists -
-	headers, err := os.Open("testdata" + strippedURL + ".headers")
+	headers, err := os.Open(dir + strippedURL + ".headers")
 
 	if err == nil {
 		he := make(http.Header)
