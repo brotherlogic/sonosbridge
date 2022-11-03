@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"time"
 
@@ -93,8 +92,7 @@ func (s *Server) buildPlayers(ctx context.Context, config *pb.Config, hhid strin
 	}
 
 	result := &groupResponse{}
-	jerr := json.Unmarshal(jsonbytes, result)
-	log.Printf("HERE: %v", jerr)
+	json.Unmarshal(jsonbytes, result)
 
 	if len(result.Players) == 0 {
 		return nil, fmt.Errorf("No players returned from %v", string(jsonbytes))
