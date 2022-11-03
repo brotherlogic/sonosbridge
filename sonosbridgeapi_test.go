@@ -157,6 +157,28 @@ func TestGetVolume(t *testing.T) {
 	}
 }
 
+func TestGetNoVoume(t *testing.T) {
+	s := GetTestServer()
+	s.GetHousehold(context.Background(), &pb.GetHouseholdRequest{})
+
+	vol, err := s.GetVolume(context.Background(), &pb.GetVolumeRequest{Player: "None"})
+	if err != nil {
+		t.Fatalf("Should have failed: %v", vol)
+	}
+
+}
+
+func TestGetBadVolume(t *testing.T) {
+	s := GetTestServer()
+	s.hclient = &testClient{directory: "testdata_badvolume"}
+	s.GetHousehold(context.Background(), &pb.GetHouseholdRequest{})
+
+	vol, err := s.GetVolume(context.Background(), &pb.GetVolumeRequest{Player: "None"})
+	if err == nil {
+		t.Fatalf("Should have failed: %v", vol)
+	}
+}
+
 func TestFirstLoad(t *testing.T) {
 	s := GetTestServer()
 	s.client.ErrorCode = make(map[string]codes.Code)
