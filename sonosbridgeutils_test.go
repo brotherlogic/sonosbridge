@@ -20,7 +20,7 @@ func TestErrorCode(t *testing.T) {
 	s := GetTestServer()
 	s.hclient = &testClient{responseCode: 400}
 
-	res, err := s.runGet(context.Background(), "", "", "")
+	res, err := s.runGet(context.Background(), "api.ws.sonos.com", "control/api/v1/households", "")
 	if err == nil {
 		t.Errorf("Should have failed: %v", res)
 	}
