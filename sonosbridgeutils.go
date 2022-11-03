@@ -9,7 +9,7 @@ import (
 )
 
 func (s *Server) runGet(ctx context.Context, host, path, token string) ([]byte, error) {
-	req, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("https://%v%v", host, path), nil)
+	req, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("https://%v/%v", host, path), nil)
 	res, err := s.hclient.Do(req)
 
 	if err != nil {
