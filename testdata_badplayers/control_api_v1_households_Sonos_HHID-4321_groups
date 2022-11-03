@@ -1,0 +1,35 @@
+{
+  "groups": [
+    {
+      "id": "RINCON_7BHBFF96BF5A34300", 
+      "name": "Playroom",
+      "coordinatorId": "RINCON_8HJLQE01RW4B21097",
+      "playbackState": "PLAYBACK_STATE_IDLE",
+      "playerIds": [
+        "RINCON_8HJLQE01RW4B21097" 
+      ]
+    },
+    {
+      "id": "RINCON_A8E9677G21B091499", 
+      "name": "Master Bedroom + 1",
+      "coordinatorId": "RINCON_Y6C3211GJ59H88131", 
+      "playbackState": "PLAYBACK_STATE_IDLE",
+      "playerIds": [
+        "RINCON_Y6C3211GJ59H88131", 
+        "RINCON_B8E9377C21G061890" 
+      ]
+    },
+    {
+      "id": "RINCON_Z4H7803J17K741322",
+      "name": "Family Room + 2",
+      "coordinatorId": "RINCON_D7Y5432M12H127890", 
+      "playbackState": "PLAYBACK_STATE_IDLE",
+      "playerIds": [
+        "RINCON_A4E9395C21G061898",
+        "RINCON_C4T1256L09Q293216", 
+        "RINCON_D7Y5432M12H127890" 
+      ]
+    }
+  ],
+  "players": []
+}
