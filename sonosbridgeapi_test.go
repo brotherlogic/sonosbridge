@@ -42,6 +42,39 @@ func TestGetAuthUrl(t *testing.T) {
 	}
 }
 
+func TestGetHousehold(t *testing.T) {
+	s := GetTestServer()
+
+	resp, err := s.GetHousehold(context.Background(), &pb.GetHouseholdRequest{})
+	if err != nil {
+		t.Fatalf("Bad read: %v", err)
+	}
+
+	if resp.GetHousehold().GetId() == "" {
+		t.Errorf("Got households: %v", resp)
+	}
+
+	if len(resp.GetHousehold().GetPlayers()) == 0 {
+		t.Errorf("No players returned: %v", resp)
+	}
+
+	// This should shortcut
+
+	resp, err = s.GetHousehold(context.Background(), &pb.GetHouseholdRequest{})
+	if err != nil {
+		t.Fatalf("Bad read: %v", err)
+	}
+
+	if resp.GetHousehold().GetId() == "" {
+		t.Errorf("Got households: %v", resp)
+	}
+
+	if len(resp.GetHousehold().GetPlayers()) == 0 {
+		t.Errorf("No players returned: %v", resp)
+	}
+
+}
+
 func TestConfig(t *testing.T) {
 	s := GetTestServer()
 
@@ -97,6 +130,11 @@ func TestBadLoad(t *testing.T) {
 	_, err = s.GetToken(context.Background(), &pb.GetTokenRequest{})
 	if status.Code(err) != codes.Internal {
 		t.Errorf("SHould have failed on getauthurl: %v", err)
+	}
+
+	_, err = s.GetHousehold(context.Background(), &pb.GetHouseholdRequest{})
+	if status.Code(err) != codes.Internal {
+		t.Errorf("SHould have failed on gethousehold: %v", err)
 	}
 }
 
@@ -159,12 +197,52 @@ func TestGetTokenFailPost(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Should have failed to get token: %v", token)
 	}
+}
 
+func TestBadHousehold(t *testing.T) {
+	s := GetTestServer()
+	s.hclient = &testClient{directory: "testdata_badhousehold/"}
+
+	token, err := s.GetHousehold(context.Background(), &pb.GetHouseholdRequest{})
+	if err == nil {
+		t.Errorf("Should have failed: %v", token)
+	}
+}
+
+func TestBadPlayers(t *testing.T) {
+	s := GetTestServer()
+	s.hclient = &testClient{directory: "testdata_badplayers/"}
+
+	token, err := s.GetHousehold(context.Background(), &pb.GetHouseholdRequest{})
+	if err == nil {
+		t.Errorf("Should have failed: %v", token)
+	}
+}
+
+func TestBadReadPlayers(t *testing.T) {
+	s := GetTestServer()
+	s.hclient = &testClient{failure: fmt.Errorf("Built to fail")}
+
+	token, err := s.buildPlayers(context.Background(), &pb.Config{}, "")
+	if err == nil {
+		t.Errorf("Should have failed: %v", token)
+	}
+}
+
+func TestBadReadHousehold(t *testing.T) {
+	s := GetTestServer()
+	s.hclient = &testClient{failure: fmt.Errorf("Built to fail")}
+
+	token, err := s.buildHousehold(context.Background(), &pb.Config{})
+	if err == nil {
+		t.Errorf("Should have failed: %v", token)
+	}
 }
 
 type testClient struct {
 	responseCode int
 	failure      error
+	directory    string
 }
 
 func (t *testClient) Do(req *http.Request) (*http.Response, error) {
@@ -172,10 +250,18 @@ func (t *testClient) Do(req *http.Request) (*http.Response, error) {
 		return nil, t.failure
 	}
 	response := &http.Response{}
-	strippedURL := strings.ReplaceAll(strings.ReplaceAll(req.URL.String(), "/", "_"), "https:__api.sonos.com_", "")
-	blah, err := os.Open("testdata/" + strippedURL)
+	strippedURL := strings.ReplaceAll(strings.ReplaceAll(req.URL.String(), "/", "_"), "https:__api.ws.sonos.com_", "")
+	log.Printf("GOT %v", strippedURL)
+	if !strings.Contains(req.URL.String(), "api.ws.sonos") {
+		strippedURL = strings.ReplaceAll(strings.ReplaceAll(req.URL.String(), "/", "_"), "https:__api.sonos.com_", "")
+	}
+	dir := "testdata/"
+	if t.directory != "" {
+		dir = t.directory
+	}
+	blah, err := os.Open(dir + strippedURL)
 
-	log.Printf("Opened %v", "testdata"+strippedURL)
+	log.Printf("Opened %v", dir+strippedURL)
 	if err != nil {
 		return nil, err
 	}
@@ -183,7 +269,7 @@ func (t *testClient) Do(req *http.Request) (*http.Response, error) {
 	response.Body = blah
 
 	// Add the header if it exists -
-	headers, err := os.Open("testdata" + strippedURL + ".headers")
+	headers, err := os.Open(dir + strippedURL + ".headers")
 
 	if err == nil {
 		he := make(http.Header)

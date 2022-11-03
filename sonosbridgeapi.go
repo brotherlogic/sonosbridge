@@ -44,6 +44,90 @@ func buildPost(config *pb.Config) *http.Request {
 	return req
 }
 
+type householdResponse struct {
+	Households []householdJson `json:"households"`
+}
+
+type householdJson struct {
+	Id string `json:"id"`
+}
+
+func (s *Server) buildHousehold(ctx context.Context, config *pb.Config) (*pb.Household, error) {
+	jsonbytes, err := s.runGet(ctx, "api.ws.sonos.com", "control/api/v1/households", config.GetToken().GetToken())
+	if err != nil {
+		return nil, err
+	}
+
+	result := &householdResponse{}
+	json.Unmarshal(jsonbytes, result)
+
+	if len(result.Households) == 0 {
+		return nil, fmt.Errorf("No households returned")
+	}
+
+	players, err := s.buildPlayers(ctx, config, result.Households[0].Id)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.Household{
+		Id:      result.Households[0].Id,
+		Players: players,
+	}, nil
+}
+
+type groupResponse struct {
+	Players []playerJson `json="players`
+}
+
+type playerJson struct {
+	Id   string `json="id"`
+	Name string `json="name"`
+}
+
+func (s *Server) buildPlayers(ctx context.Context, config *pb.Config, hhid string) ([]*pb.Player, error) {
+	jsonbytes, err := s.runGet(ctx, "api.ws.sonos.com", fmt.Sprintf("control/api/v1/households/%v", hhid), config.GetToken().GetToken())
+	if err != nil {
+		return nil, err
+	}
+
+	result := &groupResponse{}
+	json.Unmarshal(jsonbytes, result)
+
+	if len(result.Players) == 0 {
+		return nil, fmt.Errorf("No players returned from %v", string(jsonbytes))
+	}
+
+	var players []*pb.Player
+	for _, player := range result.Players {
+		players = append(players, &pb.Player{
+			Id:   player.Id,
+			Name: player.Name,
+		})
+	}
+
+	return players, nil
+}
+
+func (s *Server) GetHousehold(ctx context.Context, req *pb.GetHouseholdRequest) (*pb.GetHouseholdResponse, error) {
+	config, err := s.loadConfig(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if config.GetHousehold() != nil {
+		return &pb.GetHouseholdResponse{Household: config.GetHousehold()}, nil
+	}
+
+	household, err := s.buildHousehold(ctx, config)
+	if err != nil {
+		return nil, err
+	}
+
+	config.Household = household
+	return &pb.GetHouseholdResponse{Household: config.Household}, s.saveConfig(ctx, config)
+}
+
 func (s *Server) GetToken(ctx context.Context, req *pb.GetTokenRequest) (*pb.GetTokenResponse, error) {
 	config, err := s.loadConfig(ctx)
 	if err != nil {
