@@ -185,7 +185,17 @@ func TestGetTokenFailPost(t *testing.T) {
 
 func TestBadHousehold(t *testing.T) {
 	s := GetTestServer()
-	s.hclient = &testClient{directory: "testdata_badhousehold"}
+	s.hclient = &testClient{directory: "testdata_badhousehold/"}
+
+	token, err := s.GetHousehold(context.Background(), &pb.GetHouseholdRequest{})
+	if err == nil {
+		t.Errorf("Should have failed: %v", token)
+	}
+}
+
+func TestBadPlayers(t *testing.T) {
+	s := GetTestServer()
+	s.hclient = &testClient{directory: "testdata_badplayer/"}
 
 	token, err := s.GetHousehold(context.Background(), &pb.GetHouseholdRequest{})
 	if err == nil {
