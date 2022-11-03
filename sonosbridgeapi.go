@@ -88,7 +88,7 @@ type playerJson struct {
 }
 
 func (s *Server) buildPlayers(ctx context.Context, config *pb.Config, hhid string) ([]*pb.Player, error) {
-	jsonbytes, err := s.runGet(ctx, "api.ws.sonos.com", fmt.Sprintf("control/api/v1/households/%v", hhid), config.GetToken().GetToken())
+	jsonbytes, err := s.runGet(ctx, "api.ws.sonos.com", fmt.Sprintf("control/api/v1/households/%v/groups", hhid), config.GetToken().GetToken())
 	if err != nil {
 		return nil, err
 	}
