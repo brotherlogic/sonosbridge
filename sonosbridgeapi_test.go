@@ -219,6 +219,26 @@ func TestBadPlayers(t *testing.T) {
 	}
 }
 
+func TestBadReadPlayers(t *testing.T) {
+	s := GetTestServer()
+	s.hclient = &testClient{failure: fmt.Errorf("Built to fail")}
+
+	token, err := s.buildPlayers(context.Background(), &pb.Config{}, "")
+	if err == nil {
+		t.Errorf("Should have failed: %v", token)
+	}
+}
+
+func TestBadReadHousehold(t *testing.T) {
+	s := GetTestServer()
+	s.hclient = &testClient{failure: fmt.Errorf("Built to fail")}
+
+	token, err := s.buildHousehold(context.Background(), &pb.Config{})
+	if err == nil {
+		t.Errorf("Should have failed: %v", token)
+	}
+}
+
 type testClient struct {
 	responseCode int
 	failure      error
