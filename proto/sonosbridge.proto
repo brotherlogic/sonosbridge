@@ -69,7 +69,7 @@ message GetVolumeRequest {
 }
 
 message GetVolumeResponse {
-    int volume = 2;
+    int32 volume = 2;
 }
 
 service SonosBridgeService {
