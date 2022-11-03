@@ -17,11 +17,11 @@ import (
 )
 
 type tokenResponse struct {
-	AccessToken  string
-	TokenType    string
-	ExpireIn     int
-	RefreshToken string
-	scope        string
+	AccessToken  string `json:"access_token"`
+	TokenType    string `json:"token_type"`
+	ExpiresIn    int    `json:"expires_in"`
+	RefreshToken string `json:"refresh_token"`
+	scope        string `json:"scope"`
 }
 
 func parseToken(tokenbody string) *pb.Token {
@@ -31,7 +31,7 @@ func parseToken(tokenbody string) *pb.Token {
 		Token:      result.AccessToken,
 		Refresh:    result.RefreshToken,
 		TokenType:  result.TokenType,
-		ExpireTime: time.Now().Add(time.Second * time.Duration(result.ExpireIn)).Unix(),
+		ExpireTime: time.Now().Add(time.Second * time.Duration(result.ExpiresIn)).Unix(),
 	}
 }
 
