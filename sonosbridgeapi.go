@@ -224,7 +224,7 @@ func (s *Server) GetVolume(ctx context.Context, req *pb.GetVolumeRequest) (*pb.G
 
 	for _, player := range config.GetHousehold().GetPlayers() {
 		if player.GetName() == req.GetPlayer() {
-			res, err := s.runGet(ctx, "api.ws.sonos.com/control/api/v1", fmt.Sprintf("/players/{playerId}/playerVolume", player.GetId()), config.Token.GetToken())
+			res, err := s.runGet(ctx, "api.ws.sonos.com/control/api/v1", fmt.Sprintf("/players/%v/playerVolume", player.GetId()), config.Token.GetToken())
 			if err != nil {
 				return nil, err
 			}
