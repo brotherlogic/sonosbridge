@@ -239,7 +239,7 @@ func (s *Server) GetVolume(ctx context.Context, req *pb.GetVolumeRequest) (*pb.G
 }
 
 type setVolume struct {
-	volume int
+	Volume int
 }
 
 func (s *Server) SetVolume(ctx context.Context, req *pb.SetVolumeRequest) (*pb.SetVolumeResponse, error) {
@@ -250,7 +250,7 @@ func (s *Server) SetVolume(ctx context.Context, req *pb.SetVolumeRequest) (*pb.S
 
 	for _, player := range config.GetHousehold().GetPlayers() {
 		if player.GetName() == req.GetPlayer() {
-			sv := setVolume{volume: int(req.GetVolume())}
+			sv := setVolume{Volume: int(req.GetVolume())}
 			data, _ := json.Marshal(sv)
 			_, err := s.runPost(ctx, "api.ws.sonos.com/control/api/v1", fmt.Sprintf("/players/%v/playerVolume", player.GetId()), config.Token.GetToken(), data)
 			if err != nil {
