@@ -72,6 +72,13 @@ message GetVolumeResponse {
     int32 volume = 2;
 }
 
+message SetVolumeRequest {
+    string player = 1;
+    int32 volume = 2;
+}
+
+message SetVolumeResponse {}
+
 service SonosBridgeService {
   rpc SetConfig(SetConfigRequest) returns (SetConfigResponse) {};
   rpc GetConfig(GetConfigRequest) returns (GetConfigResponse) {};
@@ -79,4 +86,5 @@ service SonosBridgeService {
   rpc GetToken(GetTokenRequest) returns (GetTokenResponse) {};
   rpc GetHousehold(GetHouseholdRequest) returns (GetHouseholdResponse) {};
   rpc GetVolume(GetVolumeRequest) returns (GetVolumeResponse) {};
+  rpc SetVolume(SetVolumeRequest) returns (SetVolumeResponse) {};
 }
