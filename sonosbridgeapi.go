@@ -237,3 +237,29 @@ func (s *Server) GetVolume(ctx context.Context, req *pb.GetVolumeRequest) (*pb.G
 
 	return &pb.GetVolumeResponse{}, nil
 }
+
+type setVolume struct {
+	volume int
+}
+
+func (s *Server) SetVolume(ctx context.Context, req *pb.SetVolumeRequest) (*pb.SetVolumeResponse, error) {
+	config, err := s.loadConfig(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, player := range config.GetHousehold().GetPlayers() {
+		if player.GetName() == req.GetPlayer() {
+			sv := setVolume{volume: int(req.GetVolume())}
+			data, _ := json.Marshal(sv)
+			_, err := s.runPost(ctx, "api.ws.sonos.com/control/api/v1", fmt.Sprintf("/players/%v/playerVolume", player.GetId()), config.Token.GetToken(), data)
+			if err != nil {
+				return nil, err
+			}
+
+			return &pb.SetVolumeResponse{}, nil
+		}
+	}
+
+	return &pb.SetVolumeResponse{}, nil
+}
