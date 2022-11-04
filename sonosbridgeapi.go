@@ -252,7 +252,7 @@ func (s *Server) SetVolume(ctx context.Context, req *pb.SetVolumeRequest) (*pb.S
 		if player.GetName() == req.GetPlayer() {
 			sv := setVolume{Volume: int(req.GetVolume())}
 			data, _ := json.Marshal(sv)
-			_, err := s.runPost(ctx, "api.ws.sonos.com/control/api/v1", fmt.Sprintf("/players/%v/playerVolume", player.GetId()), config.Token.GetToken(), data)
+			_, err := s.runPost(ctx, "api.ws.sonos.com/control/api/v1", fmt.Sprintf("/players/%v/playerVolume?volume=%v", player.GetId(), req.GetVolume()), config.Token.GetToken(), data)
 			if err != nil {
 				return nil, err
 			}
