@@ -173,7 +173,7 @@ func (s *Server) GetAuthUrl(ctx context.Context, req *pb.GetAuthUrlRequest) (*pb
 
 	url := "https://api.sonos.com/login/v3/oauth?client_id=" +
 		config.GetClient() +
-		"&response_type=code&state=mystate&scope=playback-control-all&redirect_uri=https%3A%2F%2Fgoogle.com%2F"
+		"&response_type=code&state=mystate&scope=playback-control-all&redirect_uri=https%3A%2F%2Fwww.google.com%2F"
 
 	return &pb.GetAuthUrlResponse{Url: url}, nil
 }

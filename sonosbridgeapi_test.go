@@ -179,7 +179,18 @@ func TestGetNoVoume(t *testing.T) {
 
 	vol, err := s.GetVolume(context.Background(), &pb.GetVolumeRequest{Player: "None"})
 	if err != nil {
-		t.Fatalf("Should have failed: %v", vol)
+		t.Fatalf("Should not have failed: %v", vol)
+	}
+
+}
+
+func TestSetNoVolume(t *testing.T) {
+	s := GetTestServer()
+	s.GetHousehold(context.Background(), &pb.GetHouseholdRequest{})
+
+	vol, err := s.SetVolume(context.Background(), &pb.SetVolumeRequest{Player: "None"})
+	if err != nil {
+		t.Fatalf("Should not have failed: %v", vol)
 	}
 
 }
