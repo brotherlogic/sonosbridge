@@ -23,6 +23,7 @@ type SonosBridgeServiceClient interface {
 	GetToken(ctx context.Context, in *GetTokenRequest, opts ...grpc.CallOption) (*GetTokenResponse, error)
 	GetHousehold(ctx context.Context, in *GetHouseholdRequest, opts ...grpc.CallOption) (*GetHouseholdResponse, error)
 	GetVolume(ctx context.Context, in *GetVolumeRequest, opts ...grpc.CallOption) (*GetVolumeResponse, error)
+	SetVolume(ctx context.Context, in *SetVolumeRequest, opts ...grpc.CallOption) (*SetVolumeResponse, error)
 }
 
 type sonosBridgeServiceClient struct {
@@ -87,6 +88,15 @@ func (c *sonosBridgeServiceClient) GetVolume(ctx context.Context, in *GetVolumeR
 	return out, nil
 }
 
+func (c *sonosBridgeServiceClient) SetVolume(ctx context.Context, in *SetVolumeRequest, opts ...grpc.CallOption) (*SetVolumeResponse, error) {
+	out := new(SetVolumeResponse)
+	err := c.cc.Invoke(ctx, "/sonosbridge.SonosBridgeService/SetVolume", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SonosBridgeServiceServer is the server API for SonosBridgeService service.
 // All implementations should embed UnimplementedSonosBridgeServiceServer
 // for forward compatibility
@@ -97,6 +107,7 @@ type SonosBridgeServiceServer interface {
 	GetToken(context.Context, *GetTokenRequest) (*GetTokenResponse, error)
 	GetHousehold(context.Context, *GetHouseholdRequest) (*GetHouseholdResponse, error)
 	GetVolume(context.Context, *GetVolumeRequest) (*GetVolumeResponse, error)
+	SetVolume(context.Context, *SetVolumeRequest) (*SetVolumeResponse, error)
 }
 
 // UnimplementedSonosBridgeServiceServer should be embedded to have forward compatible implementations.
@@ -120,6 +131,9 @@ func (UnimplementedSonosBridgeServiceServer) GetHousehold(context.Context, *GetH
 }
 func (UnimplementedSonosBridgeServiceServer) GetVolume(context.Context, *GetVolumeRequest) (*GetVolumeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetVolume not implemented")
+}
+func (UnimplementedSonosBridgeServiceServer) SetVolume(context.Context, *SetVolumeRequest) (*SetVolumeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetVolume not implemented")
 }
 
 // UnsafeSonosBridgeServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -241,6 +255,24 @@ func _SonosBridgeService_GetVolume_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SonosBridgeService_SetVolume_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetVolumeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SonosBridgeServiceServer).SetVolume(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/sonosbridge.SonosBridgeService/SetVolume",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SonosBridgeServiceServer).SetVolume(ctx, req.(*SetVolumeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _SonosBridgeService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "sonosbridge.SonosBridgeService",
 	HandlerType: (*SonosBridgeServiceServer)(nil),
@@ -268,6 +300,10 @@ var _SonosBridgeService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetVolume",
 			Handler:    _SonosBridgeService_GetVolume_Handler,
+		},
+		{
+			MethodName: "SetVolume",
+			Handler:    _SonosBridgeService_SetVolume_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
