@@ -141,6 +141,11 @@ func TestBadLoad(t *testing.T) {
 	if status.Code(err) != codes.Internal {
 		t.Errorf("SHould have failed on gethousehold: %v", err)
 	}
+
+	_, err = s.SetVolume(context.Background(), &pb.SetVolumeRequest{})
+	if status.Code(err) != codes.Internal {
+		t.Errorf("SHould have failed on setvolume: %v", err)
+	}
 }
 
 func TestGetVolume(t *testing.T) {
@@ -155,6 +160,17 @@ func TestGetVolume(t *testing.T) {
 	if vol.GetVolume() != 85 {
 		t.Errorf("Bad volume: %v", vol)
 	}
+}
+
+func TestSetVolume(t *testing.T) {
+	s := GetTestServer()
+	s.GetHousehold(context.Background(), &pb.GetHouseholdRequest{})
+
+	_, err := s.SetVolume(context.Background(), &pb.SetVolumeRequest{Player: "Playroom", Volume: 12})
+	if err != nil {
+		t.Fatalf("Failed to get volume: %v", err)
+	}
+
 }
 
 func TestGetNoVoume(t *testing.T) {
