@@ -239,7 +239,7 @@ func (s *Server) GetVolume(ctx context.Context, req *pb.GetVolumeRequest) (*pb.G
 }
 
 type setVolume struct {
-	Volume int
+	Volume int `json:"volume"`
 }
 
 func (s *Server) SetVolume(ctx context.Context, req *pb.SetVolumeRequest) (*pb.SetVolumeResponse, error) {
