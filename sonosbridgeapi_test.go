@@ -198,6 +198,20 @@ func TestGetBadVolume(t *testing.T) {
 	}
 }
 
+func TestSetBadVolume(t *testing.T) {
+	s := GetTestServer()
+	s.hclient = &testClient{directory: "testdata_badvolume/"}
+	_, err := s.GetHousehold(context.Background(), &pb.GetHouseholdRequest{})
+	if err != nil {
+		t.Fatalf("Bad household: %v", err)
+	}
+
+	vol, err := s.SetVolume(context.Background(), &pb.SetVolumeRequest{Player: "Playroom"})
+	if err == nil {
+		t.Fatalf("Should have failed: %v", vol)
+	}
+}
+
 func TestFirstLoad(t *testing.T) {
 	s := GetTestServer()
 	s.client.ErrorCode = make(map[string]codes.Code)
