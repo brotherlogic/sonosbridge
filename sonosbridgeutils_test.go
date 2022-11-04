@@ -25,3 +25,23 @@ func TestErrorCode(t *testing.T) {
 		t.Errorf("Should have failed: %v", res)
 	}
 }
+
+func TestBadPostRequest(t *testing.T) {
+	s := GetTestServer()
+	s.hclient = &testClient{failure: fmt.Errorf("built to fail")}
+
+	res, err := s.runPost(context.Background(), "", "", "", nil)
+	if err == nil {
+		t.Errorf("Should have failed: %v", res)
+	}
+}
+
+func TestErrorCodePost(t *testing.T) {
+	s := GetTestServer()
+	s.hclient = &testClient{responseCode: 400}
+
+	res, err := s.runPost(context.Background(), "api.ws.sonos.com", "control/api/v1/households", "", nil)
+	if err == nil {
+		t.Errorf("Should have failed: %v", res)
+	}
+}
