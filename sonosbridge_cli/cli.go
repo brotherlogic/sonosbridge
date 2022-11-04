@@ -59,5 +59,11 @@ func main() {
 			log.Fatalf("Bad set: %v", err)
 		}
 		fmt.Printf("%v\n", url.GetVolume())
+	case "svolume":
+		url, err := client.SetVolume(ctx, &pb.SetVolumeRequest{Player: "Office 2", Volume: 20})
+		if err != nil {
+			log.Fatalf("Bad set: %v", err)
+		}
+		fmt.Printf("%v\n", url)
 	}
 }

@@ -33,6 +33,7 @@ func (s *Server) runGet(ctx context.Context, host, path, token string) ([]byte, 
 }
 
 func (s *Server) runPost(ctx context.Context, host, path, token string, data []byte) ([]byte, error) {
+	s.CtxLog(ctx, fmt.Sprintf("POST: data %v", string(data)))
 	req, _ := http.NewRequest(http.MethodPost, fmt.Sprintf("https://%v/%v", host, path), bytes.NewBuffer(data))
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", token))
 	req.Header.Set("Content-Type", "application/json")
