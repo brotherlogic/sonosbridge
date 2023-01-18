@@ -62,7 +62,7 @@ func (s *Server) buildHousehold(ctx context.Context, config *pb.Config) (*pb.Hou
 	json.Unmarshal(jsonbytes, result)
 
 	if len(result.Households) == 0 {
-		return nil, fmt.Errorf("No households returned")
+		return nil, fmt.Errorf("no households returned")
 	}
 
 	s.CtxLog(ctx, fmt.Sprintf("BODY: %v", string(jsonbytes)))
