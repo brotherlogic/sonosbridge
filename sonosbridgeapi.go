@@ -65,7 +65,7 @@ func (s *Server) buildHousehold(ctx context.Context, config *pb.Config) (*pb.Hou
 		return nil, fmt.Errorf("No households returned")
 	}
 
-	s.CtxLog(ctx, fmt.Sprintf("BODY: %v", string(jsonbytes)))
+	s.CtxLog(ctx, fmt.Sprintf("body: %v", string(jsonbytes)))
 
 	players, err := s.buildPlayers(ctx, config, result.Households[0].Id)
 	if err != nil {
