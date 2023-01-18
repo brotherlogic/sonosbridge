@@ -47,7 +47,7 @@ func (s *Server) runPost(ctx context.Context, host, path, token string, data []b
 		defer res.Body.Close()
 		body, _ := ioutil.ReadAll(res.Body)
 		s.CtxLog(ctx, fmt.Sprintf("BODY: %v", string(body)))
-		return nil, fmt.Errorf("Bad response on %v retrieve:(%v) %v", res.StatusCode, path, res)
+		return nil, fmt.Errorf("bad response on %v retrieve:(%v) %v", res.StatusCode, path, res)
 	}
 
 	defer res.Body.Close()
