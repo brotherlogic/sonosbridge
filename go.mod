@@ -3,11 +3,11 @@ module github.com/brotherlogic/sonosbridge
 go 1.19
 
 require (
-	github.com/brotherlogic/dstore v0.0.0-20230101070316-8cbb6f580f4f
-	github.com/brotherlogic/goserver v0.0.0-20230106225431-4d4abea9318a
+	github.com/brotherlogic/dstore v0.0.0-20230108103035-94e9284d0601
+	github.com/brotherlogic/goserver v0.0.0-20230117181550-4c6661b17d53
 	github.com/golang/protobuf v1.5.2
 	golang.org/x/net v0.5.0
-	google.golang.org/grpc v1.51.0
+	google.golang.org/grpc v1.52.0
 	google.golang.org/protobuf v1.28.1
 )
 
@@ -16,8 +16,8 @@ require (
 	github.com/brotherlogic/buildserver v0.0.0-20230108034220-e8f7fb54466c // indirect
 	github.com/brotherlogic/datastore v0.0.0-20230108044309-80a59f72b29b // indirect
 	github.com/brotherlogic/discovery v0.0.0-20230105182040-04b2f40a21ed // indirect
-	github.com/brotherlogic/githubcard v0.0.0-20230101072631-dcc4a0e0d7ed // indirect
-	github.com/brotherlogic/gobuildslave v0.0.0-20230104192933-16ebfc7ca538 // indirect
+	github.com/brotherlogic/githubcard v0.0.0-20230118151748-3ad17a76d2c7 // indirect
+	github.com/brotherlogic/gobuildslave v0.0.0-20230117181720-516784a20890 // indirect
 	github.com/brotherlogic/keystore v0.0.0-20230108052654-392c7a9b9675 // indirect
 	github.com/brotherlogic/lock v0.0.0-20230103180730-bb452b6fe70f // indirect
 	github.com/brotherlogic/logging v0.0.0-20230108082501-1829ce3e39d8 // indirect
@@ -41,5 +41,5 @@ require (
 	go.opentelemetry.io/otel/trace v1.11.2 // indirect
 	golang.org/x/sys v0.4.0 // indirect
 	golang.org/x/text v0.6.0 // indirect
-	google.golang.org/genproto v0.0.0-20230106154932-a12b697841d9 // indirect
+	google.golang.org/genproto v0.0.0-20230117162540-28d6b9783ac4 // indirect
 )
