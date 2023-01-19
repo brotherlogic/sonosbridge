@@ -335,7 +335,11 @@ func (t *testClient) Do(req *http.Request) (*http.Response, error) {
 		return nil, t.failure
 	}
 	response := &http.Response{}
-	strippedURL := strings.ReplaceAll(strings.ReplaceAll(req.URL.String(), "/", "_"), "https:__api.ws.sonos.com_", "")
+	strippedURL := strings.ReplaceAll(
+		strings.ReplaceAll(
+			strings.ReplaceAll(req.URL.String(), "?", "_"),
+			"/", "_"),
+		"https:__api.ws.sonos.com_", "")
 	log.Printf("GOT %v", strippedURL)
 	if !strings.Contains(req.URL.String(), "api.ws.sonos") {
 		strippedURL = strings.ReplaceAll(strings.ReplaceAll(req.URL.String(), "/", "_"), "https:__api.sonos.com_", "")
