@@ -3,7 +3,7 @@ module github.com/brotherlogic/sonosbridge
 go 1.19
 
 require (
-	github.com/brotherlogic/dstore v0.0.0-20230506015114-dcb7ded77d1a
+	github.com/brotherlogic/dstore v0.0.0-20230513015831-a358e7830940
 	github.com/brotherlogic/goserver v0.0.0-20230330215506-65bad61eb180
 	github.com/golang/protobuf v1.5.3
 	golang.org/x/net v0.10.0
