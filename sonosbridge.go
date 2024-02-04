@@ -121,5 +121,8 @@ func main() {
 		return
 	}
 
-	fmt.Printf("%v", server.Serve())
+	err = server.Serve()
+	if err != nil {
+		fmt.Printf("%v\n", err)
+	}
 }
