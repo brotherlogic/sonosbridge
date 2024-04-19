@@ -6,7 +6,7 @@ require (
 	github.com/brotherlogic/dstore v0.0.0-20240206045411-611c355b8730
 	github.com/brotherlogic/goserver v0.0.0-20230726200050-779ae6811580
 	github.com/golang/protobuf v1.5.3
-	golang.org/x/net v0.21.0
+	golang.org/x/net v0.23.0
 	google.golang.org/grpc v1.61.0
 	google.golang.org/protobuf v1.33.0
 )
@@ -30,7 +30,7 @@ require (
 	github.com/prometheus/common v0.46.0 // indirect
 	github.com/prometheus/procfs v0.12.0 // indirect
 	github.com/struCoder/pidusage v0.2.1 // indirect
-	golang.org/x/sys v0.17.0 // indirect
+	golang.org/x/sys v0.18.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240205150955-31a09d347014 // indirect
 )
