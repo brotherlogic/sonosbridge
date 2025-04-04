@@ -3,7 +3,7 @@ module github.com/brotherlogic/sonosbridge
 go 1.23.2
 
 require (
-	github.com/brotherlogic/dstore v0.0.0-20250328173226-98a639793b5a
+	github.com/brotherlogic/dstore v0.0.0-20250404182846-cc197f68c574
 	github.com/brotherlogic/goserver v0.0.0-20250123145056-95c6fbb2310a
 	github.com/golang/protobuf v1.5.4
 	golang.org/x/net v0.38.0
@@ -18,7 +18,7 @@ require (
 	github.com/brotherlogic/discovery v0.0.0-20241109204028-02908558af09 // indirect
 	github.com/brotherlogic/githubcard v0.0.0-20250328212524-d689f348d6c3 // indirect
 	github.com/brotherlogic/githubridge v0.2852.0 // indirect
-	github.com/brotherlogic/gobuildslave v0.0.0-20250328180619-bb7226d48e17 // indirect
+	github.com/brotherlogic/gobuildslave v0.0.0-20250404181817-eb2af85b7afe // indirect
 	github.com/brotherlogic/keystore v0.0.0-20240508161349-814b3200b126 // indirect
 	github.com/brotherlogic/lock v0.0.0-20250328214435-b16cc98ed236 // indirect
 	github.com/brotherlogic/logging v0.0.0-20250404180452-2f41cade6bf2 // indirect
